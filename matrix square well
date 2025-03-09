@@ -1,0 +1,56 @@
+function [V]= matrixsquarewell(V0,a,b)
+a=a/0.52917725;
+b=b/0.52917725;
+V0=V0/27.211396;
+x=0:0.001:a
+n=length(x)
+b1=(n/2)*(1-b/a);
+b2=(n/2)*(1+b/a);
+V=zeros(1,n);
+V(0:b1)=V0;
+V(b1:b2)=0;
+V(b2:n)=V0;N
+plot(x*0.52917725,V*27.211396)
+
+ h=zeros(N,N); 
+  s=eye(N,N);   
+ for j=1:N
+         h(j,j) =(j^2*%pi^2/(2*a^2))+((V0/a)*(b1+a-b2+((a/(2*j*%pi))*(sin(2*j*%pi*b2/a)-sin(2*j*%pi*b1/a)))))
+   for i = j+1:N
+    h(i,j)=V0*((sin((j-i)*%pi*b1/a)/((j-i)*%pi))-(sin((j-i)*%pi*b2/a)/((j-i)*%pi))+(sin((j+i)*%pi*b2/a)/((j+i)*%pi))-(sin((j+i)*%pi*b1/a)/((j+i)*%pi)))
+  h(j,i)=h(i,j);
+        end
+    end
+
+    [al,bl,R]=spec(h,s); //Solving eigen value problem
+    e1=al./bl;           //Eigen values
+    c=R;                 //Eigen vectors
+    [E,k]=gsort(e1);    //Sorting the eigen values
+    E=E*27.211396;
+    
+    d=c;
+    d(:,1:N)=c(:,k);    //Corresonding eigen vectors
+    j=N;//variable to keep track of wavefn
+    i=1;//loop variable for generating jth wavefn
+    while j>=1
+        psi(j,1:n) = 0; //initialising the wavefn
+        m=1;
+        while m<=N
+          psi(j,:)=psi(j,:)+d(m,i)*sqrt(2/a)*sin(m*%pi*x/a);
+            m=m+1;
+        end
+        i=i+1;   
+        j=j-1;
+     end
+     
+     p=1;//loop variable for choosing the pth wavefn to be plotted
+    x=x*0.52917725;
+q=3;
+     while p<=q
+         plot(x,psi(p,:));
+         xclick();
+         clf();
+        p=p+1;
+     end
+endfunction
+

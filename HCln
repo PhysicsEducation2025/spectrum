@@ -1,0 +1,41 @@
+function [Eno]=HCln(constn,l)
+De=constn(1)//4.4781//constn(1)//)5.2491//constn(1)//5.352160//5.346799//5.346799//;
+b=constn(2)//1.90429//constn(2)//1.7518//constn(2)//1.734139//1.734139//1.734782//1.7518//1.7341386;//constn(2)//1.735094;
+x0=constn(3)//0.74144//1.2745//constn(3)//1.274553//1.274553//1.27478//1.274553//853constn(3);//1.27455//constn(3)//1.27455;
+a=5;
+hc=1973.29; 
+mu=0.50391261*931.49410*10^6//7.00153720*931.49410*10^6;
+hcn=1239.8419*10^(-7);
+N=70;
+np=1000;
+x=0.6:0.001:a;
+//l=0;
+L=l*(l+1);
+v1=De*((exp(-2*b*(x-x0)))-(2*exp(-b*(x-x0))))+De//+x.^(-2)*hc*l*(l+1)/(2*mu);;
+E10=(%pi^2*hc^2)/(2*mu*(a^2));
+plot(x,v1)
+h=zeros(N,N);
+s=eye(N,N)
+function [I]=L3(m)
+ I=integrate('(1-cos(2*%pi*m*x./a))./(x.^2)','x',0.0001,a)
+endfunction
+function [I]= L4(m)
+ I=integrate('(cos(%pi*m*x./a))./(x.^2)','x',0.0001,a)
+endfunction
+for n=1:N
+   h(n,n)=n^2*E10+De+(De/a)*(((exp(2*b*x0)-exp(-2*b*(a-x0)))/(2*b))+((2/b)*(exp(-b*(a-x0))-exp(b*x0)))-((0.5*a^2*b)*((exp(2*b*x0)-exp(-2*b*(a-x0)))/((a^2*b^2)+(n^2*%pi^2))))+(((2*a^2*b)/((a^2*b^2)+(4*n^2*%pi^2)))*(exp(b*x0)-exp(-b*(a-x0)))))+(L*hc^2/(2*mu*a))*L3(n)
+  for m=n+1:N
+        h(m,n)=(De/a)*(((2*a^2*b/((4*a^2*b^2)+((m-n)^2*%pi^2)))*(exp(2*b*x0)-(exp(-2*b*(a-x0))*(-1)^(m-n))))-((2*a^2*b/((a^2*b^2)+((m-n)^2*%pi^2)))*(exp(b*x0)-(exp(-b*(a-x0))*(-1)^(m-n))))-((2*a^2*b/((4*a^2*b^2)+((m+n)^2*%pi^2)))*(exp(2*b*x0)-(exp(-2*b*(a-x0))*(-1)^(m+n))))+((2*a^2*b/((a^2*b^2)+((m+n)^2*%pi^2)))*(exp(b*x0)-(exp(-b*(a-x0))*(-1)^(m+n)))))+((L*hc^2/(2*mu*a))*(L4(m-n)-L4(m+n)))
+      h(n,m)=h(m,n);
+        end
+ end
+[al,bl,R]=spec(h,s);
+e1=al./bl;
+c=R;
+[E,K]=gsort(real(e1));
+Eno=E/hcn;
+//dE1=-(El(N)-El(N-1));
+//dE2=-(El(N)-El(N-2));
+//dE3=-(El(N)-El(N-3));
+
+endfunction
